@@ -33,7 +33,7 @@ func GetProfiles(c *gin.Context) {
 
 func GetProfile(c *gin.Context) {
 	network := c.Param("network")
-	profile := models.FindProfile(profiles, network)
+	profile, _ := models.FindProfile(profiles, network)
 	if profile.Network == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s profile not found", profile.Network)})
 		return
@@ -43,7 +43,7 @@ func GetProfile(c *gin.Context) {
 
 func PutProfile(c *gin.Context) {
 	network := c.Param("network")
-	profileToUpdate := models.FindProfile(profiles, network)
+	profileToUpdate, _ := models.FindProfile(profiles, network)
 	if profileToUpdate.Network == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s profile not found", profileToUpdate.Network)})
 		return
@@ -65,7 +65,7 @@ func PutProfile(c *gin.Context) {
 
 func PatchProfile(c *gin.Context) {
 	network := c.Param("network")
-	profileToUpdate := models.FindProfile(profiles, network)
+	profileToUpdate, _ := models.FindProfile(profiles, network)
 	if profileToUpdate.Network == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s profile not found", profileToUpdate.Network)})
 		return
@@ -79,4 +79,15 @@ func PatchProfile(c *gin.Context) {
 	}
 	profileToUpdate.Patch(profile)
 	c.JSON(http.StatusOK, &profileToUpdate)
+}
+
+func DeleteProfile(c *gin.Context) {
+	network := c.Param("network")
+	profile, index := models.FindProfile(profiles, network)
+	if profile.Network == "" {
+		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s profile not found", profile.Network)})
+		return
+	}
+	profiles = append(profiles[:index], profiles[index+1:]...)
+	c.JSON(http.StatusOK, profile)
 }

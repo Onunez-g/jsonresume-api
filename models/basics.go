@@ -71,11 +71,11 @@ func (p *Profile) IfNetworkExists(profiles []Profile) bool {
 	return false
 }
 
-func FindProfile(profiles []Profile, network string) *Profile {
-	for _, v := range profiles {
+func FindProfile(profiles []Profile, network string) (*Profile, int) {
+	for k, v := range profiles {
 		if v.Network == network {
-			return &v
+			return &v, k
 		}
 	}
-	return &Profile{}
+	return &Profile{}, -1
 }
