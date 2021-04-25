@@ -17,18 +17,22 @@ func CacheControl() gin.HandlerFunc {
 		path := c.Request.URL.Path
 		c.Header("cache-control", "public")
 		c.Header("Etag", generateEtag(path, c.Params))
-
+		ver := versions[path]
 		if match := c.Request.Header.Get("If-None-Match"); match != "" {
 			if strings.Contains(Etags[path], match) {
 				c.AbortWithStatus(http.StatusNotModified)
 				return
 			}
+			ver++
+			versions[path] = ver
 		}
 		if match := c.Request.Header.Get("If-Match"); match != "" {
 			if !strings.Contains(Etags[path], match) {
 				c.AbortWithStatus(http.StatusConflict)
 				return
 			}
+			ver++
+			versions[path] = ver
 		}
 		c.Next()
 	}
@@ -41,8 +45,6 @@ func generateEtag(path string, params gin.Params) string {
 	}
 	// /basics/profiles-network:github-1
 	ver := versions[path]
-	ver++
-	versions[path] = ver
 	e += fmt.Sprintf("-%d", ver)
 	Etags[path] = etag.Generate([]byte(e), false)
 	return Etags[path]

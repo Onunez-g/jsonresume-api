@@ -12,7 +12,7 @@ func ErrorManager() gin.HandlerFunc {
 		defer func() {
 			if r := recover(); r != nil {
 				fmt.Println(r)
-				c.JSON(http.StatusInternalServerError, gin.H{
+				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 					"message": r,
 				})
 			}
