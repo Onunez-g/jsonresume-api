@@ -41,7 +41,7 @@ func GetEducation(c *gin.Context) {
 
 func PutEducation(c *gin.Context) {
 	institution := c.Param("institution")
-	educationToUpdate, _ := m.FindEducation(m.MyResume.Education, institution)
+	educationToUpdate, index := m.FindEducation(m.MyResume.Education, institution)
 	if educationToUpdate.Institution == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s institution not found", educationToUpdate.Institution)})
 		return
@@ -54,13 +54,14 @@ func PutEducation(c *gin.Context) {
 		return
 	}
 	educationToUpdate = &education
+	m.MyResume.Education[index] = *educationToUpdate
 	c.JSON(http.StatusOK, education)
 }
 
 func PatchEducation(c *gin.Context) {
 	defer utils.UpdateResume(m.MyResume.Education, m.MyResume.Education)
 	institution := c.Param("institution")
-	educationToUpdate, _ := m.FindEducation(m.MyResume.Education, institution)
+	educationToUpdate, index := m.FindEducation(m.MyResume.Education, institution)
 	if educationToUpdate.Institution == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s institution not found", educationToUpdate.Institution)})
 		return
@@ -73,6 +74,7 @@ func PatchEducation(c *gin.Context) {
 		return
 	}
 	educationToUpdate.Patch(education)
+	m.MyResume.Education[index] = *educationToUpdate
 	c.JSON(http.StatusOK, &educationToUpdate)
 }
 

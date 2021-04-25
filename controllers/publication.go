@@ -41,7 +41,7 @@ func GetPublication(c *gin.Context) {
 
 func PutPublication(c *gin.Context) {
 	name := c.Param("name")
-	publicationToUpdate, _ := m.FindPublication(m.MyResume.Publications, name)
+	publicationToUpdate, index := m.FindPublication(m.MyResume.Publications, name)
 	if publicationToUpdate.Name == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s name not found", publicationToUpdate.Name)})
 		return
@@ -54,12 +54,13 @@ func PutPublication(c *gin.Context) {
 		return
 	}
 	publicationToUpdate = &publication
+	m.MyResume.Publications[index] = *publicationToUpdate
 	c.JSON(http.StatusOK, publication)
 }
 
 func PatchPublication(c *gin.Context) {
 	name := c.Param("name")
-	publicationToUpdate, _ := m.FindPublication(m.MyResume.Publications, name)
+	publicationToUpdate, index := m.FindPublication(m.MyResume.Publications, name)
 	if publicationToUpdate.Name == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s name not found", publicationToUpdate.Name)})
 		return
@@ -72,6 +73,7 @@ func PatchPublication(c *gin.Context) {
 		return
 	}
 	publicationToUpdate.Patch(publication)
+	m.MyResume.Publications[index] = *publicationToUpdate
 	c.JSON(http.StatusOK, &publicationToUpdate)
 }
 

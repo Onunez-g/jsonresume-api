@@ -42,7 +42,7 @@ func GetLanguage(c *gin.Context) {
 
 func PutLanguage(c *gin.Context) {
 	lang := c.Param("lang")
-	languageToUpdate, _ := m.FindLanguage(m.MyResume.Languages, lang)
+	languageToUpdate, index := m.FindLanguage(m.MyResume.Languages, lang)
 	if languageToUpdate.Language == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s language not found", languageToUpdate.Language)})
 		return
@@ -55,12 +55,13 @@ func PutLanguage(c *gin.Context) {
 		return
 	}
 	languageToUpdate = &language
+	m.MyResume.Languages[index] = *languageToUpdate
 	c.JSON(http.StatusOK, language)
 }
 
 func PatchLanguage(c *gin.Context) {
 	lang := c.Param("lang")
-	languageToUpdate, _ := m.FindLanguage(m.MyResume.Languages, lang)
+	languageToUpdate, index := m.FindLanguage(m.MyResume.Languages, lang)
 	if languageToUpdate.Language == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s language not found", languageToUpdate.Language)})
 		return
@@ -73,6 +74,8 @@ func PatchLanguage(c *gin.Context) {
 		return
 	}
 	languageToUpdate.Patch(language)
+	m.MyResume.Languages[index] = *languageToUpdate
+
 	c.JSON(http.StatusOK, &languageToUpdate)
 }
 

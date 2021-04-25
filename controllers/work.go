@@ -43,7 +43,7 @@ func GetWork(c *gin.Context) {
 func PutWork(c *gin.Context) {
 
 	company := c.Param("company")
-	workToUpdate, _ := m.FindWork(m.MyResume.Work, company)
+	workToUpdate, index := m.FindWork(m.MyResume.Work, company)
 	if workToUpdate.Company == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s company not found", workToUpdate.Company)})
 		return
@@ -56,13 +56,14 @@ func PutWork(c *gin.Context) {
 		return
 	}
 	workToUpdate = &work
+	m.MyResume.Work[index] = *workToUpdate
 	c.JSON(http.StatusOK, work)
 }
 
 func PatchWork(c *gin.Context) {
 
 	company := c.Param("company")
-	workToUpdate, _ := m.FindWork(m.MyResume.Work, company)
+	workToUpdate, index := m.FindWork(m.MyResume.Work, company)
 	if workToUpdate.Company == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s company not found", workToUpdate.Company)})
 		return
@@ -75,6 +76,7 @@ func PatchWork(c *gin.Context) {
 		return
 	}
 	workToUpdate.Patch(work)
+	m.MyResume.Work[index] = *workToUpdate
 	c.JSON(http.StatusOK, &workToUpdate)
 }
 

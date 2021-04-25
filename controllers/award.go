@@ -41,7 +41,7 @@ func GetAward(c *gin.Context) {
 
 func PutAward(c *gin.Context) {
 	title := c.Param("title")
-	awardToUpdate, _ := m.FindAward(m.MyResume.Awards, title)
+	awardToUpdate, index := m.FindAward(m.MyResume.Awards, title)
 	if awardToUpdate.Title == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s title not found", awardToUpdate.Title)})
 		return
@@ -54,12 +54,13 @@ func PutAward(c *gin.Context) {
 		return
 	}
 	awardToUpdate = &award
+	m.MyResume.Awards[index] = *awardToUpdate
 	c.JSON(http.StatusOK, award)
 }
 
 func PatchAward(c *gin.Context) {
 	title := c.Param("title")
-	awardToUpdate, _ := m.FindAward(m.MyResume.Awards, title)
+	awardToUpdate, index := m.FindAward(m.MyResume.Awards, title)
 	if awardToUpdate.Title == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s title not found", awardToUpdate.Title)})
 		return
@@ -72,6 +73,7 @@ func PatchAward(c *gin.Context) {
 		return
 	}
 	awardToUpdate.Patch(award)
+	m.MyResume.Awards[index] = *awardToUpdate
 	c.JSON(http.StatusOK, &awardToUpdate)
 }
 

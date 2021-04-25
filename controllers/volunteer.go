@@ -43,7 +43,7 @@ func GetVolunteer(c *gin.Context) {
 func PutVolunteer(c *gin.Context) {
 
 	organization := c.Param("organization")
-	volunteerToUpdate, _ := m.FindVolunteer(m.MyResume.Volunteer, organization)
+	volunteerToUpdate, index := m.FindVolunteer(m.MyResume.Volunteer, organization)
 	if volunteerToUpdate.Organization == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s organization not found", volunteerToUpdate.Organization)})
 		return
@@ -56,13 +56,15 @@ func PutVolunteer(c *gin.Context) {
 		return
 	}
 	volunteerToUpdate = &volunteer
+	m.MyResume.Volunteer[index] = *volunteerToUpdate
+
 	c.JSON(http.StatusOK, volunteer)
 }
 
 func PatchVolunteer(c *gin.Context) {
 
 	organization := c.Param("organization")
-	volunteerToUpdate, _ := m.FindVolunteer(m.MyResume.Volunteer, organization)
+	volunteerToUpdate, index := m.FindVolunteer(m.MyResume.Volunteer, organization)
 	if volunteerToUpdate.Organization == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s organization not found", volunteerToUpdate.Organization)})
 		return
@@ -75,6 +77,7 @@ func PatchVolunteer(c *gin.Context) {
 		return
 	}
 	volunteerToUpdate.Patch(volunteer)
+	m.MyResume.Volunteer[index] = *volunteerToUpdate
 	c.JSON(http.StatusOK, &volunteerToUpdate)
 }
 

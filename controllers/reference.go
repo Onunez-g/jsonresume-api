@@ -41,7 +41,7 @@ func GetReference(c *gin.Context) {
 
 func PutReference(c *gin.Context) {
 	name := c.Param("name")
-	referenceToUpdate, _ := m.FindReference(m.MyResume.References, name)
+	referenceToUpdate, index := m.FindReference(m.MyResume.References, name)
 	if referenceToUpdate.Name == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s name not found", referenceToUpdate.Name)})
 		return
@@ -54,14 +54,15 @@ func PutReference(c *gin.Context) {
 		return
 	}
 	referenceToUpdate = &reference
+	m.MyResume.References[index] = *referenceToUpdate
 	c.JSON(http.StatusOK, reference)
 }
 
 func PatchReference(c *gin.Context) {
 	name := c.Param("name")
-	publicationToUpdate, _ := m.FindReference(m.MyResume.References, name)
-	if publicationToUpdate.Name == "" {
-		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s name not found", publicationToUpdate.Name)})
+	referenceToUpdate, index := m.FindReference(m.MyResume.References, name)
+	if referenceToUpdate.Name == "" {
+		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s name not found", referenceToUpdate.Name)})
 		return
 	}
 	body := c.Request.Body
@@ -71,8 +72,10 @@ func PatchReference(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
 		return
 	}
-	publicationToUpdate.Patch(reference)
-	c.JSON(http.StatusOK, &publicationToUpdate)
+	referenceToUpdate.Patch(reference)
+	m.MyResume.References[index] = *referenceToUpdate
+
+	c.JSON(http.StatusOK, &referenceToUpdate)
 }
 
 func DeleteReference(c *gin.Context) {
