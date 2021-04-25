@@ -12,6 +12,7 @@ import (
 var volunteers = models.MyResume.Volunteer
 
 func PostVolunteer(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Volunteer, volunteers)
 	body := c.Request.Body
 	var volunteer models.Work
 	if err := utils.ReadFromBody(body, &volunteer); err != nil {
@@ -42,6 +43,7 @@ func GetVolunteer(c *gin.Context) {
 }
 
 func PutVolunteer(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Volunteer, volunteers)
 	organization := c.Param("organization")
 	volunteerToUpdate, _ := models.FindVolunteer(volunteers, organization)
 	if volunteerToUpdate.Organization == "" {
@@ -64,6 +66,7 @@ func PutVolunteer(c *gin.Context) {
 }
 
 func PatchVolunteer(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Volunteer, volunteers)
 	organization := c.Param("organization")
 	volunteerToUpdate, _ := models.FindVolunteer(volunteers, organization)
 	if volunteerToUpdate.Organization == "" {
@@ -82,6 +85,7 @@ func PatchVolunteer(c *gin.Context) {
 }
 
 func DeleteVolunteer(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Volunteer, volunteers)
 	organization := c.Param("organization")
 	volunteer, index := models.FindVolunteer(volunteers, organization)
 	if volunteer.Organization == "" {

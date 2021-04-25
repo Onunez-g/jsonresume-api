@@ -12,6 +12,7 @@ import (
 var works = models.MyResume.Work
 
 func PostWork(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Work, works)
 	body := c.Request.Body
 	var work models.Work
 	if err := utils.ReadFromBody(body, &work); err != nil {
@@ -42,6 +43,7 @@ func GetWork(c *gin.Context) {
 }
 
 func PutWork(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Work, works)
 	company := c.Param("company")
 	workToUpdate, _ := models.FindWork(works, company)
 	if workToUpdate.Company == "" {
@@ -64,6 +66,7 @@ func PutWork(c *gin.Context) {
 }
 
 func PatchWork(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Work, works)
 	company := c.Param("company")
 	workToUpdate, _ := models.FindWork(works, company)
 	if workToUpdate.Company == "" {
@@ -82,6 +85,7 @@ func PatchWork(c *gin.Context) {
 }
 
 func DeleteWork(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Work, works)
 	company := c.Param("company")
 	work, index := models.FindWork(works, company)
 	if work.Company == "" {

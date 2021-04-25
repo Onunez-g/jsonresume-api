@@ -12,6 +12,7 @@ import (
 var references = models.MyResume.References
 
 func PostReference(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.References, references)
 	body := c.Request.Body
 	var reference models.Reference
 	if err := utils.ReadFromBody(body, &reference); err != nil {
@@ -42,6 +43,7 @@ func GetReference(c *gin.Context) {
 }
 
 func PutReference(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.References, references)
 	name := c.Param("name")
 	referenceToUpdate, _ := models.FindReference(references, name)
 	if referenceToUpdate.Name == "" {
@@ -64,6 +66,7 @@ func PutReference(c *gin.Context) {
 }
 
 func PatchReference(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.References, references)
 	name := c.Param("name")
 	publicationToUpdate, _ := models.FindReference(references, name)
 	if publicationToUpdate.Name == "" {
@@ -82,6 +85,7 @@ func PatchReference(c *gin.Context) {
 }
 
 func DeleteReference(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.References, references)
 	name := c.Param("name")
 	reference, index := models.FindReference(references, name)
 	if reference.Name == "" {

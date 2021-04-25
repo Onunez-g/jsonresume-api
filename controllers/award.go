@@ -12,6 +12,7 @@ import (
 var awards = models.MyResume.Awards
 
 func PostAward(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Awards, awards)
 	body := c.Request.Body
 	var award models.Award
 	if err := utils.ReadFromBody(body, &award); err != nil {
@@ -42,6 +43,7 @@ func GetAward(c *gin.Context) {
 }
 
 func PutAward(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Awards, awards)
 	title := c.Param("title")
 	awardToUpdate, _ := models.FindAward(awards, title)
 	if awardToUpdate.Title == "" {
@@ -64,6 +66,7 @@ func PutAward(c *gin.Context) {
 }
 
 func PatchAward(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Awards, awards)
 	title := c.Param("title")
 	awardToUpdate, _ := models.FindAward(awards, title)
 	if awardToUpdate.Title == "" {
@@ -82,6 +85,7 @@ func PatchAward(c *gin.Context) {
 }
 
 func DeleteAward(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Awards, awards)
 	title := c.Param("title")
 	award, index := models.FindAward(awards, title)
 	if award.Title == "" {

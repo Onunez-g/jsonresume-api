@@ -13,6 +13,7 @@ var skills = models.MyResume.Skills
 var interests = models.MyResume.Interests
 
 func PostSkill(c *gin.Context) {
+
 	body := c.Request.Body
 	var skill models.Skill
 	if err := utils.ReadFromBody(body, &skill); err != nil {
@@ -25,6 +26,7 @@ func PostSkill(c *gin.Context) {
 		return
 	}
 	list := SkillorInterest(c.Request.URL.Path)
+	defer updateList(c.Request.URL.Path, list)
 	list = append(list, skill)
 	c.JSON(http.StatusOK, skill)
 }
@@ -90,6 +92,7 @@ func PatchSkill(c *gin.Context) {
 func DeleteSkill(c *gin.Context) {
 	name := c.Param("name")
 	list := SkillorInterest(c.Request.URL.Path)
+	defer updateList(c.Request.URL.Path, list)
 	skill, index := models.FindSkill(list, name)
 	if skill.Name == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s name not found", skill.Name)})
@@ -104,4 +107,12 @@ func SkillorInterest(path string) []models.Skill {
 		return skills
 	}
 	return interests
+}
+
+func updateList(path string, list []models.Skill) {
+	if models.IsSkill(path) {
+		utils.UpdateResume(models.MyResume.Skills, list)
+	} else {
+		utils.UpdateResume(models.MyResume.Interests, list)
+	}
 }

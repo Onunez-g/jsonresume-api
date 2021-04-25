@@ -12,6 +12,7 @@ import (
 var publications = models.MyResume.Publications
 
 func PostPublication(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Publications, publications)
 	body := c.Request.Body
 	var publication models.Publication
 	if err := utils.ReadFromBody(body, &publication); err != nil {
@@ -42,6 +43,7 @@ func GetPublication(c *gin.Context) {
 }
 
 func PutPublication(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Publications, publications)
 	name := c.Param("name")
 	publicationToUpdate, _ := models.FindPublication(publications, name)
 	if publicationToUpdate.Name == "" {
@@ -64,6 +66,7 @@ func PutPublication(c *gin.Context) {
 }
 
 func PatchPublication(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Publications, publications)
 	name := c.Param("name")
 	publicationToUpdate, _ := models.FindPublication(publications, name)
 	if publicationToUpdate.Name == "" {
@@ -82,6 +85,7 @@ func PatchPublication(c *gin.Context) {
 }
 
 func DeletePublication(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Publications, publications)
 	name := c.Param("name")
 	publication, index := models.FindPublication(publications, name)
 	if publication.Name == "" {

@@ -12,6 +12,7 @@ import (
 var profiles = models.MyResume.Basics.Profiles
 
 func PostProfile(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Basics.Profiles, profiles)
 	body := c.Request.Body
 	var profile models.Profile
 	if err := utils.ReadFromBody(body, &profile); err != nil {
@@ -42,6 +43,7 @@ func GetProfile(c *gin.Context) {
 }
 
 func PutProfile(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Basics.Profiles, profiles)
 	network := c.Param("network")
 	profileToUpdate, _ := models.FindProfile(profiles, network)
 	if profileToUpdate.Network == "" {
@@ -64,6 +66,7 @@ func PutProfile(c *gin.Context) {
 }
 
 func PatchProfile(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Basics.Profiles, profiles)
 	network := c.Param("network")
 	profileToUpdate, _ := models.FindProfile(profiles, network)
 	if profileToUpdate.Network == "" {
@@ -82,6 +85,7 @@ func PatchProfile(c *gin.Context) {
 }
 
 func DeleteProfile(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Basics.Profiles, profiles)
 	network := c.Param("network")
 	profile, index := models.FindProfile(profiles, network)
 	if profile.Network == "" {

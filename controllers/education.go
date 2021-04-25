@@ -12,6 +12,7 @@ import (
 var educations = models.MyResume.Education
 
 func PostEducation(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Education, educations)
 	body := c.Request.Body
 	var education models.Education
 	if err := utils.ReadFromBody(body, &education); err != nil {
@@ -42,6 +43,7 @@ func GetEducation(c *gin.Context) {
 }
 
 func PutEducation(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Education, educations)
 	institution := c.Param("institution")
 	educationToUpdate, _ := models.FindEducation(educations, institution)
 	if educationToUpdate.Institution == "" {
@@ -64,6 +66,7 @@ func PutEducation(c *gin.Context) {
 }
 
 func PatchEducation(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Education, educations)
 	institution := c.Param("institution")
 	educationToUpdate, _ := models.FindEducation(educations, institution)
 	if educationToUpdate.Institution == "" {
@@ -82,6 +85,7 @@ func PatchEducation(c *gin.Context) {
 }
 
 func DeleteEducation(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Education, educations)
 	institution := c.Param("institution")
 	education, index := models.FindEducation(educations, institution)
 	if education.Institution == "" {

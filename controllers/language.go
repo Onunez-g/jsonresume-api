@@ -12,6 +12,7 @@ import (
 var languages = models.MyResume.Languages
 
 func PostLanguage(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Languages, languages)
 	body := c.Request.Body
 	var language models.Language
 	if err := utils.ReadFromBody(body, &language); err != nil {
@@ -42,6 +43,7 @@ func GetLanguage(c *gin.Context) {
 }
 
 func PutLanguage(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Languages, languages)
 	lang := c.Param("lang")
 	languageToUpdate, _ := models.FindLanguage(languages, lang)
 	if languageToUpdate.Language == "" {
@@ -64,6 +66,7 @@ func PutLanguage(c *gin.Context) {
 }
 
 func PatchLanguage(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Languages, languages)
 	lang := c.Param("lang")
 	languageToUpdate, _ := models.FindLanguage(languages, lang)
 	if languageToUpdate.Language == "" {
@@ -82,6 +85,7 @@ func PatchLanguage(c *gin.Context) {
 }
 
 func DeleteLanguage(c *gin.Context) {
+	defer utils.UpdateResume(models.MyResume.Languages, languages)
 	lang := c.Param("lang")
 	language, index := models.FindLanguage(languages, lang)
 	if language.Language == "" {
