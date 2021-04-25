@@ -43,6 +43,15 @@ func (w *Work) IfCompanyExists(works []Work) bool {
 	return false
 }
 
+func (w *Work) IfOrganizationExists(volunteers []Work) bool {
+	for _, v := range volunteers {
+		if v.Organization == w.Organization {
+			return true
+		}
+	}
+	return false
+}
+
 func FindWork(works []Work, company string) (*Work, int) {
 	for k, v := range works {
 		if v.Company == company {
