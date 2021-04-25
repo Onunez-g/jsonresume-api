@@ -41,7 +41,7 @@ func GetEducation(c *gin.Context) {
 	c.JSON(http.StatusOK, &education)
 }
 
-func PutEducations(c *gin.Context) {
+func PutEducation(c *gin.Context) {
 	institution := c.Param("institution")
 	educationToUpdate, _ := models.FindEducation(educations, institution)
 	if educationToUpdate.Institution == "" {

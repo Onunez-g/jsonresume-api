@@ -30,7 +30,12 @@ func (b *Basics) Patch(basics map[string]interface{}) {
 		case "summary":
 			b.Summary = v.(string)
 		case "location":
+			b.Location = v.(Location)
 		case "profiles":
+			profiles := v.([]interface{})
+			for x, y := range b.Profiles {
+				y.Patch(profiles[x].(map[string]interface{}))
+			}
 		}
 	}
 }

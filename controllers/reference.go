@@ -81,7 +81,7 @@ func PatchReference(c *gin.Context) {
 	c.JSON(http.StatusOK, &publicationToUpdate)
 }
 
-func Deletereference(c *gin.Context) {
+func DeleteReference(c *gin.Context) {
 	name := c.Param("name")
 	reference, index := models.FindReference(references, name)
 	if reference.Name == "" {
