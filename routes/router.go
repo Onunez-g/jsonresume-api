@@ -13,6 +13,13 @@ func GetRoutes() *gin.Engine {
 		"Onunez-g": "Hola1234",
 	}), middlewares.CacheControl())
 	r.Use(middlewares.CacheControl())
+
+	//Resume
+	r.GET("/resume", controllers.GetResume)
+	r.HEAD("/resume", controllers.GetResume)
+	auth.PUT("/resume", controllers.PutResume)
+	auth.PATCH("/resume", controllers.PatchResume)
+	auth.DELETE("/resume", controllers.DeleteResume)
 	//Basics
 	r.GET("/resume/basics", controllers.GetBasics)
 	r.HEAD("/resume/basics", controllers.GetBasics)
