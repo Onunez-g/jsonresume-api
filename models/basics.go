@@ -43,6 +43,23 @@ type Location struct {
 	Region      string `json:"region"`
 }
 
+func (l *Location) Patch(location map[string]interface{}) {
+	for k, v := range location {
+		switch k {
+		case "address":
+			l.Address = v.(string)
+		case "postalCode":
+			l.PostalCode = v.(string)
+		case "city":
+			l.City = v.(string)
+		case "countryCode":
+			l.CountryCode = v.(string)
+		case "region":
+			l.Region = v.(string)
+		}
+	}
+}
+
 type Profile struct {
 	Network  string `json:"network"`
 	Username string `json:"username"`

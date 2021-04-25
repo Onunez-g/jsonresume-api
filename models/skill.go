@@ -1,5 +1,7 @@
 package models
 
+import "strings"
+
 type Skill struct {
 	Name     string   `json:"name"`
 	Level    string   `json:"level,omitempty"`
@@ -28,6 +30,14 @@ func (s *Skill) IfNameExists(skills []Skill) bool {
 	return false
 }
 
+func (s *Skill) IndexKeyword(keyword string) int {
+	for k, v := range s.Keywords {
+		if v == keyword {
+			return k
+		}
+	}
+	return -1
+}
 func FindSkill(skills []Skill, name string) (*Skill, int) {
 	for k, v := range skills {
 		if v.Name == name {
@@ -35,4 +45,8 @@ func FindSkill(skills []Skill, name string) (*Skill, int) {
 		}
 	}
 	return &Skill{}, -1
+}
+
+func IsSkill(path string) bool {
+	return strings.Contains(path, "skills")
 }

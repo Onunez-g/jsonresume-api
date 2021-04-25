@@ -10,6 +10,7 @@ import (
 )
 
 var skills = models.MyResume.Skills
+var interests = models.MyResume.Interests
 
 func PostSkill(c *gin.Context) {
 	body := c.Request.Body
@@ -23,17 +24,20 @@ func PostSkill(c *gin.Context) {
 		c.JSON(http.StatusConflict, gin.H{"message": fmt.Sprintf("%s name already exists", skill.Name)})
 		return
 	}
-	skills = append(skills, skill)
+	list := SkillorInterest(c.Request.URL.Path)
+	list = append(list, skill)
 	c.JSON(http.StatusOK, skill)
 }
 
 func GetSkills(c *gin.Context) {
-	c.JSON(http.StatusOK, skills)
+	list := SkillorInterest(c.Request.URL.Path)
+	c.JSON(http.StatusOK, list)
 }
 
 func GetSkill(c *gin.Context) {
 	name := c.Param("name")
-	skill, _ := models.FindSkill(skills, name)
+	list := SkillorInterest(c.Request.URL.Path)
+	skill, _ := models.FindSkill(list, name)
 	if skill.Name == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s name not found", skill.Name)})
 		return
@@ -43,9 +47,10 @@ func GetSkill(c *gin.Context) {
 
 func PutSkill(c *gin.Context) {
 	name := c.Param("name")
-	awardToUpdate, _ := models.FindSkill(skills, name)
-	if awardToUpdate.Name == "" {
-		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s name not found", awardToUpdate.Name)})
+	list := SkillorInterest(c.Request.URL.Path)
+	skillToUpdate, _ := models.FindSkill(list, name)
+	if skillToUpdate.Name == "" {
+		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s name not found", skillToUpdate.Name)})
 		return
 	}
 	body := c.Request.Body
@@ -55,17 +60,18 @@ func PutSkill(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
 		return
 	}
-	if skill.IfNameExists(skills) {
+	if skill.IfNameExists(list) {
 		c.JSON(http.StatusConflict, gin.H{"message": fmt.Sprintf("%s name already exists", skill.Name)})
 		return
 	}
-	awardToUpdate = &skill
+	skillToUpdate = &skill
 	c.JSON(http.StatusOK, skill)
 }
 
 func PatchSkill(c *gin.Context) {
 	name := c.Param("name")
-	skillToUpdate, _ := models.FindSkill(skills, name)
+	list := SkillorInterest(c.Request.URL.Path)
+	skillToUpdate, _ := models.FindSkill(list, name)
 	if skillToUpdate.Name == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s name not found", skillToUpdate.Name)})
 		return
@@ -83,11 +89,19 @@ func PatchSkill(c *gin.Context) {
 
 func DeleteSkill(c *gin.Context) {
 	name := c.Param("name")
-	skill, index := models.FindSkill(skills, name)
+	list := SkillorInterest(c.Request.URL.Path)
+	skill, index := models.FindSkill(list, name)
 	if skill.Name == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s name not found", skill.Name)})
 		return
 	}
-	skills = append(skills[:index], skills[index+1:]...)
+	list = append(list[:index], list[index+1:]...)
 	c.JSON(http.StatusOK, skill)
+}
+
+func SkillorInterest(path string) []models.Skill {
+	if models.IsSkill(path) {
+		return skills
+	}
+	return interests
 }
