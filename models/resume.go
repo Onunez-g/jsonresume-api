@@ -9,7 +9,7 @@ type Resume struct {
 	Publications []Publication `json:"publications"`
 	Skills       []Skill       `json:"skills"`
 	Languages    []Language    `json:"languages"`
-	Interests    []Interest    `json:"interests"`
+	Interests    []Skill       `json:"interests"`
 	References   []Reference   `json:"references"`
 }
 
