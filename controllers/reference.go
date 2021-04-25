@@ -5,36 +5,33 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/onunez-g/jsonresume-api/models"
+	m "github.com/onunez-g/jsonresume-api/models"
 	"github.com/onunez-g/jsonresume-api/utils"
 )
 
-var references = models.MyResume.References
-
 func PostReference(c *gin.Context) {
-	defer utils.UpdateResume(models.MyResume.References, references)
 	body := c.Request.Body
-	var reference models.Reference
+	var reference m.Reference
 	if err := utils.ReadFromBody(body, &reference); err != nil {
 		fmt.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
 		return
 	}
-	if reference.IfNameExists(references) {
+	if reference.IfNameExists(m.MyResume.References) {
 		c.JSON(http.StatusConflict, gin.H{"message": fmt.Sprintf("%s name already exists", reference.Name)})
 		return
 	}
-	references = append(references, reference)
+	m.MyResume.References = append(m.MyResume.References, reference)
 	c.JSON(http.StatusOK, reference)
 }
 
 func GetReferences(c *gin.Context) {
-	c.JSON(http.StatusOK, references)
+	c.JSON(http.StatusOK, m.MyResume.References)
 }
 
 func GetReference(c *gin.Context) {
 	name := c.Param("name")
-	reference, _ := models.FindReference(references, name)
+	reference, _ := m.FindReference(m.MyResume.References, name)
 	if reference.Name == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s name not found", reference.Name)})
 		return
@@ -43,22 +40,17 @@ func GetReference(c *gin.Context) {
 }
 
 func PutReference(c *gin.Context) {
-	defer utils.UpdateResume(models.MyResume.References, references)
 	name := c.Param("name")
-	referenceToUpdate, _ := models.FindReference(references, name)
+	referenceToUpdate, _ := m.FindReference(m.MyResume.References, name)
 	if referenceToUpdate.Name == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s name not found", referenceToUpdate.Name)})
 		return
 	}
 	body := c.Request.Body
-	var reference models.Reference
+	var reference m.Reference
 	if err := utils.ReadFromBody(body, &reference); err != nil {
 		fmt.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
-		return
-	}
-	if reference.IfNameExists(references) {
-		c.JSON(http.StatusConflict, gin.H{"message": fmt.Sprintf("%s name already exists", reference.Name)})
 		return
 	}
 	referenceToUpdate = &reference
@@ -66,9 +58,8 @@ func PutReference(c *gin.Context) {
 }
 
 func PatchReference(c *gin.Context) {
-	defer utils.UpdateResume(models.MyResume.References, references)
 	name := c.Param("name")
-	publicationToUpdate, _ := models.FindReference(references, name)
+	publicationToUpdate, _ := m.FindReference(m.MyResume.References, name)
 	if publicationToUpdate.Name == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s name not found", publicationToUpdate.Name)})
 		return
@@ -85,13 +76,12 @@ func PatchReference(c *gin.Context) {
 }
 
 func DeleteReference(c *gin.Context) {
-	defer utils.UpdateResume(models.MyResume.References, references)
 	name := c.Param("name")
-	reference, index := models.FindReference(references, name)
+	reference, index := m.FindReference(m.MyResume.References, name)
 	if reference.Name == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s name not found", reference.Name)})
 		return
 	}
-	references = append(references[:index], references[index+1:]...)
+	m.MyResume.References = append(m.MyResume.References[:index], m.MyResume.References[index+1:]...)
 	c.JSON(http.StatusOK, reference)
 }

@@ -56,11 +56,6 @@ func PutKeyword(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
 		return
 	}
-	idx := skill.IndexKeyword(keyword)
-	if idx != -1 {
-		c.JSON(http.StatusConflict, gin.H{"message": fmt.Sprintf("%s keyword already exists", keyword)})
-		return
-	}
 	skill.Keywords[index] = keyword
 	c.JSON(http.StatusOK, keyword)
 }

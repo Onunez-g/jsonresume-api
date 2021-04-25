@@ -62,10 +62,6 @@ func PutSkill(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
 		return
 	}
-	if skill.IfNameExists(list) {
-		c.JSON(http.StatusConflict, gin.H{"message": fmt.Sprintf("%s name already exists", skill.Name)})
-		return
-	}
 	skillToUpdate = &skill
 	c.JSON(http.StatusOK, skill)
 }

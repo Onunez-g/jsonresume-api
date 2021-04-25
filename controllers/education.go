@@ -5,36 +5,33 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/onunez-g/jsonresume-api/models"
+	m "github.com/onunez-g/jsonresume-api/models"
 	"github.com/onunez-g/jsonresume-api/utils"
 )
 
-var educations = models.MyResume.Education
-
 func PostEducation(c *gin.Context) {
-	defer utils.UpdateResume(models.MyResume.Education, educations)
 	body := c.Request.Body
-	var education models.Education
+	var education m.Education
 	if err := utils.ReadFromBody(body, &education); err != nil {
 		fmt.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
 		return
 	}
-	if education.IfInstitutionExists(educations) {
+	if education.IfInstitutionExists(m.MyResume.Education) {
 		c.JSON(http.StatusConflict, gin.H{"message": fmt.Sprintf("%s institution already exists", education.Institution)})
 		return
 	}
-	educations = append(educations, education)
+	m.MyResume.Education = append(m.MyResume.Education, education)
 	c.JSON(http.StatusOK, education)
 }
 
 func GetEducations(c *gin.Context) {
-	c.JSON(http.StatusOK, educations)
+	c.JSON(http.StatusOK, m.MyResume.Education)
 }
 
 func GetEducation(c *gin.Context) {
 	institution := c.Param("institution")
-	education, _ := models.FindEducation(educations, institution)
+	education, _ := m.FindEducation(m.MyResume.Education, institution)
 	if education.Institution == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s institution not found", education.Institution)})
 		return
@@ -43,22 +40,17 @@ func GetEducation(c *gin.Context) {
 }
 
 func PutEducation(c *gin.Context) {
-	defer utils.UpdateResume(models.MyResume.Education, educations)
 	institution := c.Param("institution")
-	educationToUpdate, _ := models.FindEducation(educations, institution)
+	educationToUpdate, _ := m.FindEducation(m.MyResume.Education, institution)
 	if educationToUpdate.Institution == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s institution not found", educationToUpdate.Institution)})
 		return
 	}
 	body := c.Request.Body
-	var education models.Education
+	var education m.Education
 	if err := utils.ReadFromBody(body, &education); err != nil {
 		fmt.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
-		return
-	}
-	if education.IfInstitutionExists(educations) {
-		c.JSON(http.StatusConflict, gin.H{"message": fmt.Sprintf("%s institution already exists", education.Institution)})
 		return
 	}
 	educationToUpdate = &education
@@ -66,9 +58,9 @@ func PutEducation(c *gin.Context) {
 }
 
 func PatchEducation(c *gin.Context) {
-	defer utils.UpdateResume(models.MyResume.Education, educations)
+	defer utils.UpdateResume(m.MyResume.Education, m.MyResume.Education)
 	institution := c.Param("institution")
-	educationToUpdate, _ := models.FindEducation(educations, institution)
+	educationToUpdate, _ := m.FindEducation(m.MyResume.Education, institution)
 	if educationToUpdate.Institution == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s institution not found", educationToUpdate.Institution)})
 		return
@@ -85,13 +77,13 @@ func PatchEducation(c *gin.Context) {
 }
 
 func DeleteEducation(c *gin.Context) {
-	defer utils.UpdateResume(models.MyResume.Education, educations)
+	defer utils.UpdateResume(m.MyResume.Education, m.MyResume.Education)
 	institution := c.Param("institution")
-	education, index := models.FindEducation(educations, institution)
+	education, index := m.FindEducation(m.MyResume.Education, institution)
 	if education.Institution == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s institution not found", education.Institution)})
 		return
 	}
-	educations = append(educations[:index], educations[index+1:]...)
+	m.MyResume.Education = append(m.MyResume.Education[:index], m.MyResume.Education[index+1:]...)
 	c.JSON(http.StatusOK, education)
 }

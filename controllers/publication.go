@@ -5,36 +5,33 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/onunez-g/jsonresume-api/models"
+	m "github.com/onunez-g/jsonresume-api/models"
 	"github.com/onunez-g/jsonresume-api/utils"
 )
 
-var publications = models.MyResume.Publications
-
 func PostPublication(c *gin.Context) {
-	defer utils.UpdateResume(models.MyResume.Publications, publications)
 	body := c.Request.Body
-	var publication models.Publication
+	var publication m.Publication
 	if err := utils.ReadFromBody(body, &publication); err != nil {
 		fmt.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
 		return
 	}
-	if publication.IfNameExists(publications) {
+	if publication.IfNameExists(m.MyResume.Publications) {
 		c.JSON(http.StatusConflict, gin.H{"message": fmt.Sprintf("%s name already exists", publication.Name)})
 		return
 	}
-	publications = append(publications, publication)
+	m.MyResume.Publications = append(m.MyResume.Publications, publication)
 	c.JSON(http.StatusOK, publication)
 }
 
 func GetPublications(c *gin.Context) {
-	c.JSON(http.StatusOK, publications)
+	c.JSON(http.StatusOK, m.MyResume.Publications)
 }
 
 func GetPublication(c *gin.Context) {
 	name := c.Param("name")
-	publication, _ := models.FindPublication(publications, name)
+	publication, _ := m.FindPublication(m.MyResume.Publications, name)
 	if publication.Name == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s name not found", publication.Name)})
 		return
@@ -43,22 +40,17 @@ func GetPublication(c *gin.Context) {
 }
 
 func PutPublication(c *gin.Context) {
-	defer utils.UpdateResume(models.MyResume.Publications, publications)
 	name := c.Param("name")
-	publicationToUpdate, _ := models.FindPublication(publications, name)
+	publicationToUpdate, _ := m.FindPublication(m.MyResume.Publications, name)
 	if publicationToUpdate.Name == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s name not found", publicationToUpdate.Name)})
 		return
 	}
 	body := c.Request.Body
-	var publication models.Publication
+	var publication m.Publication
 	if err := utils.ReadFromBody(body, &publication); err != nil {
 		fmt.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
-		return
-	}
-	if publication.IfNameExists(publications) {
-		c.JSON(http.StatusConflict, gin.H{"message": fmt.Sprintf("%s name already exists", publication.Name)})
 		return
 	}
 	publicationToUpdate = &publication
@@ -66,9 +58,8 @@ func PutPublication(c *gin.Context) {
 }
 
 func PatchPublication(c *gin.Context) {
-	defer utils.UpdateResume(models.MyResume.Publications, publications)
 	name := c.Param("name")
-	publicationToUpdate, _ := models.FindPublication(publications, name)
+	publicationToUpdate, _ := m.FindPublication(m.MyResume.Publications, name)
 	if publicationToUpdate.Name == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s name not found", publicationToUpdate.Name)})
 		return
@@ -85,13 +76,12 @@ func PatchPublication(c *gin.Context) {
 }
 
 func DeletePublication(c *gin.Context) {
-	defer utils.UpdateResume(models.MyResume.Publications, publications)
 	name := c.Param("name")
-	publication, index := models.FindPublication(publications, name)
+	publication, index := m.FindPublication(m.MyResume.Publications, name)
 	if publication.Name == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s name not found", publication.Name)})
 		return
 	}
-	publications = append(publications[:index], publications[index+1:]...)
+	m.MyResume.Publications = append(m.MyResume.Publications[:index], m.MyResume.Publications[index+1:]...)
 	c.JSON(http.StatusOK, publication)
 }

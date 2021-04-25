@@ -5,36 +5,33 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/onunez-g/jsonresume-api/models"
+	m "github.com/onunez-g/jsonresume-api/models"
 	"github.com/onunez-g/jsonresume-api/utils"
 )
 
-var profiles = models.MyResume.Basics.Profiles
-
 func PostProfile(c *gin.Context) {
-	defer utils.UpdateResume(models.MyResume.Basics.Profiles, profiles)
 	body := c.Request.Body
-	var profile models.Profile
+	var profile m.Profile
 	if err := utils.ReadFromBody(body, &profile); err != nil {
 		fmt.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
 		return
 	}
-	if profile.IfNetworkExists(profiles) {
+	if profile.IfNetworkExists(m.MyResume.Basics.Profiles) {
 		c.JSON(http.StatusConflict, gin.H{"message": fmt.Sprintf("%s profile already exists", profile.Network)})
 		return
 	}
-	profiles = append(profiles, profile)
+	m.MyResume.Basics.Profiles = append(m.MyResume.Basics.Profiles, profile)
 	c.JSON(http.StatusOK, profile)
 }
 
 func GetProfiles(c *gin.Context) {
-	c.JSON(http.StatusOK, profiles)
+	c.JSON(http.StatusOK, m.MyResume.Basics.Profiles)
 }
 
 func GetProfile(c *gin.Context) {
 	network := c.Param("network")
-	profile, _ := models.FindProfile(profiles, network)
+	profile, _ := m.FindProfile(m.MyResume.Basics.Profiles, network)
 	if profile.Network == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s profile not found", profile.Network)})
 		return
@@ -43,32 +40,27 @@ func GetProfile(c *gin.Context) {
 }
 
 func PutProfile(c *gin.Context) {
-	defer utils.UpdateResume(models.MyResume.Basics.Profiles, profiles)
 	network := c.Param("network")
-	profileToUpdate, _ := models.FindProfile(profiles, network)
+	profileToUpdate, index := m.FindProfile(m.MyResume.Basics.Profiles, network)
 	if profileToUpdate.Network == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s profile not found", profileToUpdate.Network)})
 		return
 	}
 	body := c.Request.Body
-	var profile models.Profile
+	var profile m.Profile
 	if err := utils.ReadFromBody(body, &profile); err != nil {
 		fmt.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
 		return
 	}
-	if profile.IfNetworkExists(profiles) {
-		c.JSON(http.StatusConflict, gin.H{"message": fmt.Sprintf("%s profile already exists", profile.Network)})
-		return
-	}
 	profileToUpdate = &profile
+	m.MyResume.Basics.Profiles[index] = *profileToUpdate
 	c.JSON(http.StatusOK, profile)
 }
 
 func PatchProfile(c *gin.Context) {
-	defer utils.UpdateResume(models.MyResume.Basics.Profiles, profiles)
 	network := c.Param("network")
-	profileToUpdate, _ := models.FindProfile(profiles, network)
+	profileToUpdate, index := m.FindProfile(m.MyResume.Basics.Profiles, network)
 	if profileToUpdate.Network == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s profile not found", profileToUpdate.Network)})
 		return
@@ -81,17 +73,17 @@ func PatchProfile(c *gin.Context) {
 		return
 	}
 	profileToUpdate.Patch(profile)
+	m.MyResume.Basics.Profiles[index] = *profileToUpdate
 	c.JSON(http.StatusOK, &profileToUpdate)
 }
 
 func DeleteProfile(c *gin.Context) {
-	defer utils.UpdateResume(models.MyResume.Basics.Profiles, profiles)
 	network := c.Param("network")
-	profile, index := models.FindProfile(profiles, network)
+	profile, index := m.FindProfile(m.MyResume.Basics.Profiles, network)
 	if profile.Network == "" {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s profile not found", profile.Network)})
 		return
 	}
-	profiles = append(profiles[:index], profiles[index+1:]...)
+	m.MyResume.Basics.Profiles = append(m.MyResume.Basics.Profiles[:index], m.MyResume.Basics.Profiles[index+1:]...)
 	c.JSON(http.StatusOK, profile)
 }

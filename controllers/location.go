@@ -21,6 +21,7 @@ func PutLocation(c *gin.Context) {
 		return
 	}
 	models.MyResume.Basics.Location = location
+	c.JSON(http.StatusOK, models.MyResume.Basics.Location)
 }
 
 func DeleteLocation(c *gin.Context) {
