@@ -16,3 +16,8 @@ func ReadFromBody(body io.ReadCloser, val interface{}) error {
 	}
 	return nil
 }
+
+func UpdateResume(resume interface{}, list interface{}) {
+
+	copy(resume.([]interface{}), list.([]interface{}))
+}
