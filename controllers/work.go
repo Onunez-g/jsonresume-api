@@ -88,6 +88,6 @@ func DeleteWork(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s company not found", work.Company)})
 		return
 	}
-	profiles = append(profiles[:index], profiles[index+1:]...)
+	works = append(works[:index], works[index+1:]...)
 	c.JSON(http.StatusOK, work)
 }

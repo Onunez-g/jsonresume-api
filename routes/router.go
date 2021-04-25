@@ -7,7 +7,9 @@ import (
 
 func GetRoutes() *gin.Engine {
 	r := gin.Default()
-	auth := r.Group("/")
+	auth := r.Group("/", gin.BasicAuth(gin.Accounts{
+		"Onunez-g": "Hola1234",
+	}))
 
 	//Basics
 	r.GET("/basics", controllers.GetBasics)

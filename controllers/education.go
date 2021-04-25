@@ -9,7 +9,7 @@ import (
 	"github.com/onunez-g/jsonresume-api/utils"
 )
 
-var educations []models.Education
+var educations = models.MyResume.Education
 
 func PostEducation(c *gin.Context) {
 	body := c.Request.Body
@@ -88,6 +88,6 @@ func DeleteEducation(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("%s institution not found", education.Institution)})
 		return
 	}
-	profiles = append(profiles[:index], profiles[index+1:]...)
+	educations = append(educations[:index], educations[index+1:]...)
 	c.JSON(http.StatusOK, education)
 }
