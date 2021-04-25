@@ -11,8 +11,8 @@ func GetRoutes() *gin.Engine {
 	r.Use(middlewares.ErrorManager())
 	auth := r.Group("/", gin.BasicAuth(gin.Accounts{
 		"Onunez-g": "Hola1234",
-	}))
-
+	}), middlewares.CacheControl())
+	r.Use(middlewares.CacheControl())
 	//Basics
 	r.GET("/resume/basics", controllers.GetBasics)
 	r.HEAD("/resume/basics", controllers.GetBasics)
