@@ -3,10 +3,12 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/onunez-g/jsonresume-api/controllers"
+	"github.com/onunez-g/jsonresume-api/middlewares"
 )
 
 func GetRoutes() *gin.Engine {
 	r := gin.Default()
+	r.Use(middlewares.ErrorManager())
 	auth := r.Group("/", gin.BasicAuth(gin.Accounts{
 		"Onunez-g": "Hola1234",
 	}))
