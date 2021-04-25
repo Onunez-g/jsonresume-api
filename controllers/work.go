@@ -91,7 +91,3 @@ func DeleteWork(c *gin.Context) {
 	profiles = append(profiles[:index], profiles[index+1:]...)
 	c.JSON(http.StatusOK, work)
 }
-
-func PostHighlight(c *gin.Context) {
-
-}
