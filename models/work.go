@@ -29,7 +29,14 @@ func (w *Work) Patch(work map[string]interface{}) {
 		case "summary":
 			w.Summary = v.(string)
 		case "highlights":
-			w.Highlights = v.([]string)
+			highlights := v.([]interface{})
+			highl := make([]string, 0, len(highlights))
+			for _, v := range highlights {
+				if v.(string) != "" {
+					highl = append(highl, v.(string))
+				}
+			}
+			w.Highlights = highl
 		}
 	}
 }

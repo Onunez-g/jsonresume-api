@@ -26,7 +26,12 @@ func (e *Education) Patch(education map[string]interface{}) {
 		case "gpa":
 			e.Gpa = v.(string)
 		case "courses":
-			e.Courses = v.([]string)
+			courses := v.([]interface{})
+			cour := make([]string, 0, len(courses))
+			for _, v := range courses {
+				cour = append(cour, v.(string))
+			}
+			e.Courses = cour
 		}
 	}
 }

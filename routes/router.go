@@ -74,7 +74,7 @@ func GetRoutes() *gin.Engine {
 	r.HEAD("/resume/awards/:title", controllers.GetAward)
 	auth.POST("/resume/awards", controllers.PostAward)
 	auth.PUT("/resume/awards/:title", controllers.PutAward)
-	auth.PATCH("/resume/awards/:title", controllers.PutAward)
+	auth.PATCH("/resume/awards/:title", controllers.PatchAward)
 	auth.DELETE("/resume/awards/:title", controllers.DeleteAward)
 
 	//Publications
